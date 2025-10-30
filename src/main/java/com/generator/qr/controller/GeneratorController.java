@@ -22,6 +22,11 @@ public class GeneratorController {
     private final LinkManagerService linkManagerService;
     private final LinkStorageService linkStorageService;
 
+    @PostMapping("/test")
+    public ResponseEntity<String> testEndpoint() {
+        return ResponseEntity.ok("Test endpoint is working!");
+    }
+
     @PostMapping("/generate")
     public ResponseEntity<?> generateQRCode(@Valid @RequestBody GeneratorRequest request) {
         try {
