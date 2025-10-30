@@ -1,36 +1,63 @@
 package com.generator.qr.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.generator.qr.service.LinkStorageService;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class LinkStorageServiceImpl implements LinkStorageService {
-
-    private static final String JSON_PATH = System.getProperty("user.dir") + "/config/links.json";
+    @Value("${app.links-file}")
+    private String linksFilePath;
 
     @Override
-    public boolean saveLink(String id, String originalUrl) {
+    public boolean saveLink(String id, String url) {
         try {
-            JSONObject links = loadLinks();
-            links.put(id, originalUrl);
-            Files.writeString(Paths.get(JSON_PATH), links.toString(2));
+            Path path = Paths.get(linksFilePath);
+            Files.createDirectories(path.getParent());
+            Map<String, String> links = readLinks(path);
+            links.put(id, url);
+            writeLinks(path, links);
             return true;
         } catch (IOException e) {
-            System.err.println("❌ Error al guardar links.json: " + e.getMessage());
+            System.err.println("❌ Error saving link: " + e.getMessage());
             return false;
+        }
+    }
+
+    private Map<String, String> readLinks(Path path) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        if (!Files.exists(path)) {
+            return new HashMap<>();
+        }
+        try (InputStream is = Files.newInputStream(path)) {
+            return mapper.readValue(is, new TypeReference<Map<String, String>>() {});
+        }
+    }
+
+    private void writeLinks(Path path, Map<String, String> links) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        try (OutputStream os = Files.newOutputStream(path)) {
+            mapper.writerWithDefaultPrettyPrinter().writeValue(os, links);
         }
     }
 
     @Override
     public JSONObject loadLinks() {
         try {
-            String content = Files.readString(Paths.get(JSON_PATH));
+            String content = Files.readString(Paths.get(linksFilePath));
             return new JSONObject(content);
         } catch (IOException e) {
             System.err.println("⚠️ No se pudo leer el archivo links.json: " + e.getMessage());
