@@ -14,7 +14,8 @@ import lombok.RequiredArgsConstructor;
 import java.net.URI;
 import java.util.Optional;
 
-@RestController("/generator")
+@RestController
+@RequestMapping("/generator")
 @RequiredArgsConstructor
 public class GeneratorController {
 
@@ -44,5 +45,4 @@ public class GeneratorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
 }
