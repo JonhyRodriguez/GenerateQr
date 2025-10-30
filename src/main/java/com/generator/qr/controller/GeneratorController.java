@@ -31,7 +31,7 @@ public class GeneratorController {
     public ResponseEntity<?> generateQRCode(@Valid @RequestBody GeneratorRequest request) {
         try {
             String id = linkManagerService.createShortLink(request.getLink());
-            String shortUrl = "https://tusitio.onrender.com/redirect/" + id;
+            String shortUrl = "https://generateqr-0tnr.onrender.com/redirect/" + id;
             return ResponseEntity.ok(new QRCodeResponse("QR generated successfully", shortUrl));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

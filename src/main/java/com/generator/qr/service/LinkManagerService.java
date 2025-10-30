@@ -17,7 +17,7 @@ public class LinkManagerService {
         boolean saved = linkStorageService.saveLink(id, originalUrl);
         if (!saved) throw new RuntimeException("No se pudo guardar el enlace");
 
-        String shortUrl = "https://tusitio.onrender.com/redirect/" + id;
+        String shortUrl = "https://generateqr-0tnr.onrender.com/redirect/" + id;
         qrGeneratorService.generateQRCodeImage(shortUrl, id, 300, 300);
         return id;
     }
