@@ -22,7 +22,7 @@ public class GeneratorController {
     private final LinkManagerService linkManagerService;
     private final LinkStorageService linkStorageService;
 
-    @PostMapping("/test")
+    @GetMapping("/test")
     public ResponseEntity<String> testEndpoint() {
         return ResponseEntity.ok("Test endpoint is working!");
     }
