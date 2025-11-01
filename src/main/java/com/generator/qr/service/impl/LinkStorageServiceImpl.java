@@ -3,6 +3,7 @@ package com.generator.qr.service.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.generator.qr.service.LinkStorageService;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,9 +41,14 @@ public class LinkStorageServiceImpl implements LinkStorageService {
 
     @Override
     public Optional<String> getOriginalUrl(String id) {
-        try {
-            Path path = Paths.get(linksFilePath);
-            Map<String, String> links = readLinks(path);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(linksFilePath)) {
+            if (inputStream == null) {
+                System.err.println("❌ File not fount in classpath: " + linksFilePath);
+                return Optional.empty();
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, String> links = mapper.readValue(inputStream, new TypeReference<>() {});
             System.out.println("Searching for ID: " + id);
             System.out.println("File content: " + links);
             return Optional.ofNullable(links.get(id));
