@@ -3,15 +3,13 @@ package com.generator.qr.service.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.generator.qr.service.LinkStorageService;
-import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class LinkStorageServiceImpl implements LinkStorageService {
     @Value("${app.links-file}")
     private String linksFilePath;
@@ -34,7 +33,7 @@ public class LinkStorageServiceImpl implements LinkStorageService {
             writeLinks(path, links);
             return true;
         } catch (IOException e) {
-            System.err.println("❌ Error saving link: " + e.getMessage());
+            log.error("❌ Error saving link: " + e.getMessage());
             return false;
         }
     }
@@ -43,17 +42,14 @@ public class LinkStorageServiceImpl implements LinkStorageService {
     public Optional<String> getOriginalUrl(String id) {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(linksFilePath)) {
             if (inputStream == null) {
-                System.err.println("❌ File not fount in classpath: " + linksFilePath);
                 return Optional.empty();
             }
 
             ObjectMapper mapper = new ObjectMapper();
             Map<String, String> links = mapper.readValue(inputStream, new TypeReference<>() {});
-            System.out.println("Searching for ID: " + id);
-            System.out.println("File content: " + links);
             return Optional.ofNullable(links.get(id));
         } catch (IOException e) {
-            System.err.println("Error reading links file: " + e.getMessage());
+            log.error("❌ Error reading links file: " + e.getMessage());
             return Optional.empty();
         }
     }

@@ -22,11 +22,6 @@ public class GeneratorController {
     private final LinkManagerService linkManagerService;
     private final LinkStorageService linkStorageService;
 
-    @GetMapping("")
-    public ResponseEntity<String> alive() {
-        return ResponseEntity.ok("");
-    }
-
     @PostMapping("/generate")
     public ResponseEntity<?> generateQRCode(@Valid @RequestBody GeneratorRequest request) {
         try {
