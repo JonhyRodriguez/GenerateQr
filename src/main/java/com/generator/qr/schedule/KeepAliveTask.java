@@ -24,7 +24,7 @@ public class KeepAliveTask {
 
             client.send(request, HttpResponse.BodyHandlers.discarding());
         } catch (Exception e) {
-            log.error("❌ Error en el ping: " + e.getMessage());
+            log.error("Error during keep-alive request: {}", e.getMessage());
         }
     }
 }

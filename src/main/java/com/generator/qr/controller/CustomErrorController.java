@@ -18,11 +18,17 @@ public class CustomErrorController implements ErrorController {
     public ResponseEntity<Map<String, String>> handleError(HttpServletRequest request) {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
         String path = (String) request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
+        Throwable exception = (Throwable) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "Something went wrong");
         response.put("status", status != null ? status.toString() : "unknown");
         response.put("path", path != null ? path : "unknown");
+
+        if (exception != null) {
+            response.put("error", exception.getClass().getSimpleName());
+            response.put("details", exception.getMessage());
+        }
 
         return ResponseEntity.status(HttpStatus.valueOf(Integer.parseInt(response.get("status")))).body(response);
     }

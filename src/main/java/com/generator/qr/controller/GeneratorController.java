@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/generator")
+@RequestMapping
 @RequiredArgsConstructor
 public class GeneratorController {
 

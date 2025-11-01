@@ -32,7 +32,7 @@ public class LinkStorageServiceImpl implements LinkStorageService {
             writeLinks(path, links);
             return true;
         } catch (IOException e) {
-            System.err.println("❌ Error al guardar el link: " + e.getMessage());
+            System.err.println("❌ Error saving link: " + e.getMessage());
             return false;
         }
     }
@@ -42,11 +42,11 @@ public class LinkStorageServiceImpl implements LinkStorageService {
         try {
             Path path = Paths.get(linksFilePath);
             Map<String, String> links = readLinks(path);
-            System.out.println("Buscando ID: " + id);
-            System.out.println("Contenido del archivo: " + links);
+            System.out.println("Searching for ID: " + id);
+            System.out.println("File content: " + links);
             return Optional.ofNullable(links.get(id));
         } catch (IOException e) {
-            System.err.println("❌ Error al leer el archivo: " + e.getMessage());
+            System.err.println("Error reading links file: " + e.getMessage());
             return Optional.empty();
         }
     }

@@ -15,7 +15,7 @@ public class LinkManagerService {
     public String createShortLink(String originalUrl) throws Exception {
         String id = UUID.randomUUID().toString().substring(0, 10);
         boolean saved = linkStorageService.saveLink(id, originalUrl);
-        if (!saved) throw new RuntimeException("No se pudo guardar el enlace");
+        if (!saved) throw new RuntimeException("Failed to save the link");
 
         String shortUrl = "https://generateqr-0tnr.onrender.com/redirect/" + id;
         qrGeneratorService.generateQRCodeImage(shortUrl, id, 300, 300);
