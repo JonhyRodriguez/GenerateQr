@@ -32,8 +32,22 @@ public class LinkStorageServiceImpl implements LinkStorageService {
             writeLinks(path, links);
             return true;
         } catch (IOException e) {
-            System.err.println("❌ Error saving link: " + e.getMessage());
+            System.err.println("❌ Error al guardar el link: " + e.getMessage());
             return false;
+        }
+    }
+
+    @Override
+    public Optional<String> getOriginalUrl(String id) {
+        try {
+            Path path = Paths.get(linksFilePath);
+            Map<String, String> links = readLinks(path);
+            System.out.println("Buscando ID: " + id);
+            System.out.println("Contenido del archivo: " + links);
+            return Optional.ofNullable(links.get(id));
+        } catch (IOException e) {
+            System.err.println("❌ Error al leer el archivo: " + e.getMessage());
+            return Optional.empty();
         }
     }
 
@@ -52,22 +66,5 @@ public class LinkStorageServiceImpl implements LinkStorageService {
         try (OutputStream os = Files.newOutputStream(path)) {
             mapper.writerWithDefaultPrettyPrinter().writeValue(os, links);
         }
-    }
-
-    @Override
-    public JSONObject loadLinks() {
-        try {
-            String content = Files.readString(Paths.get(linksFilePath));
-            return new JSONObject(content);
-        } catch (IOException e) {
-            System.err.println("⚠️ No se pudo leer el archivo links.json: " + e.getMessage());
-            return new JSONObject();
-        }
-    }
-
-    @Override
-    public Optional<String> getOriginalUrl(String id) {
-        JSONObject links = loadLinks();
-        return Optional.ofNullable(links.optString(id, null));
     }
 }
